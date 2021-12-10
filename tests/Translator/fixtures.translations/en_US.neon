@@ -1,0 +1,34 @@
++parent: parents/en_US.neon
+
+messages:
+	error:
+		userNotFound: "User not found."
+		accessDenied: "Access denied."
+
+content:
+	title: Today is %s
+	homepage:
+		header: "Hello world!"
+		description:
+			part1: "Lorem ipsum 1"
+			part2: "et dolores el simet 2"
+			part3: @content.homepage.header
+			part4: @content.homepage.description
+			part5: @content.homepage.description.part5
+
+time:
+	ago:
+		second:
+			1: few moments ago
+			2: few moments ago
+			?: %s secs. ago
+		minute:
+			1: a minute ago
+			?: %s mins. ago
+
+placeholder:
+	userLogged:
+		?: "User %s [ID: %d] has been logged in at %s."
+
+fallback:
+	b: This translation is missing in CZ

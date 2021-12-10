@@ -1,0 +1,35 @@
+{varType Flexsyscz\Localization\Translator $translator}
+{varType Flexsyscz\Localization\DictionariesRepository $dictionariesRepository}
+
+<h1>Translations</h1>
+<div class="tracy-inner">
+    <div class="tracy-inner-container">
+        <h2>List of dictionaries</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Namespace</th>
+                <th>Language</th>
+                <th>File</th>
+            </tr>
+            </thead>
+            {foreach $dictionariesRepository->findAll() as $namespace => $languages}
+                <tr n:foreach="$languages as $dictionary">
+                    <td>{$dictionary->namespace}</td>
+                    <td>{$dictionary->language}</td>
+                    <td>{$dictionary->filePath}</td>
+                </tr>
+            {else}
+                <tr>
+                    <td colspan="3"><em>no dictionary found!</em></td>
+                </tr>
+            {/foreach}
+        </table>
+    </div>
+    <div class="tracy-inner-container">
+        <h2>Debugger</h2>
+        <div n:foreach="$translator->debugger as $translation" style="margin-bottom: 1rem">
+            {Tracy\Dumper::toHtml($translation)|noescape}
+        </div>
+    </div>
+</div>

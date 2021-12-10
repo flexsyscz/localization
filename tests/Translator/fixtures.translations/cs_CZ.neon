@@ -1,0 +1,34 @@
++parent: parents/cs_CZ.neon
+
+messages:
+	error:
+		userNotFound: "Uživatel nenalezen."
+		accessDenied: "Přístup byl odepřen."
+
+content:
+	title: Dnes je %s
+	homepage:
+		header: "Dobrý den!"
+		description:
+			part1: "Lorem ipsum 1"
+			part2: "et dolores el simet 2"
+			part3: @content.homepage.header
+			part4: @content.homepage.description
+			part5: @content.homepage.description.part5
+
+time:
+	ago:
+		second:
+			1: před chvílí
+			2: před chvílí
+			?: před %s sek.
+		minute:
+			1: před minutou
+			?: před %s min.
+
+placeholder:
+	userLogged:
+		?: "Uživatel %s [ID: %d] se přihlásil v %s."
+
+fallback:
+	a: Tento překlad v EN chybí

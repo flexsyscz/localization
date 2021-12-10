@@ -1,0 +1,39 @@
+{
+	"name": "flexsyscz/localization",
+	"description": "Localization support for PHP (Nette) web applications.",
+	"keywords": ["flexsyscz", "date", "time", "date-time"],
+	"homepage": "https://www.flexsys.cz",
+	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
+	"authors": [
+		{
+			"name": "Václav Lukeš",
+			"homepage": "https://www.vaclavlukes.cz"
+		}
+	],
+	"require": {
+		"php": ">=8.1",
+		"tracy/tracy": "^2.8",
+		"nette/utils": "^3.2",
+		"nette/neon": "^3.3",
+		"latte/latte": "^2.10",
+		"ext-iconv": "*"
+	},
+	"require-dev": {
+		"nette/tester": "^2.4",
+		"phpstan/phpstan-nette": "^1.0",
+		"nette/coding-standard": "^3.2"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"minimum-stability": "stable",
+	"scripts": {
+		"phpstan": "phpstan analyse",
+		"tester": "tester tests -s"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0-dev"
+		}
+	}
+}
