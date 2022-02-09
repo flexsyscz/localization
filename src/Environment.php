@@ -51,7 +51,7 @@ class Environment
 		$this->supportedLanguages = [];
 		foreach ($properties->supportedLanguages as $supportedLanguage) {
 			if(isset($supportedLanguage->name) && isset($supportedLanguage->value)) { // @todo remove condition after enums will be fully supported in PHPStan
-				$this->supportedLanguages[Strings::lower($supportedLanguage->name)] = $supportedLanguage->value;
+				$this->supportedLanguages[Strings::lower($supportedLanguage->name)] = (string) $supportedLanguage->value;
 			}
 		}
 

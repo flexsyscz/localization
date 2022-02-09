@@ -141,7 +141,9 @@ class Translator implements Localization\Translator
 		if ($this->dictionariesRepository->environment->debugMode) {
 			$backtrace = [];
 			foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 5) as $level) {
-				$backtrace[] = $this->dictionariesRepository->environment->normalizePath($level['file']);
+				if(isset($level['file'])) {
+					$backtrace[] = $this->dictionariesRepository->environment->normalizePath($level['file']);
+				}
 			}
 
 			$this->debugger[] = [
