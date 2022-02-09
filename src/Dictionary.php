@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
 
-use Nette\Neon\Neon;
 use Nette\SmartObject;
-use Nette\Utils\FileSystem;
 
 
 /**
@@ -73,7 +72,7 @@ class Dictionary
 	 */
 	public function getByNodes(Environment $environment, array $nodes, array $parameters, array $entry = null): ?string
 	{
-		if($this->followings <= $environment->maxFollowings) {
+		if ($this->followings <= $environment->maxFollowings) {
 			if (!$entry) {
 				$this->followings = 0;
 				$entry = $this->data;
@@ -84,34 +83,36 @@ class Dictionary
 				if (isset($entry[$node])) {
 					if (is_array($entry[$node])) {
 						return $this->getByNodes($environment, $nodes, $parameters, $entry[$node]);
-					} else if (is_string($entry[$node])) {
+					} elseif (is_string($entry[$node])) {
 						$message = $entry[$node];
 						$followMask = "#^{$environment->followSymbol}#";
 						if (preg_match($followMask, $message)) {
 							$this->followings++;
 
-							if($environment->delimiter === '') {
+							if ($environment->delimiter === '') {
 								throw new InvalidArgumentException('Delimiter must be non-empty string.');
 							}
 
-							$followNodes = explode($environment->delimiter, strval(preg_replace($followMask, '', $message)));
+							$followNodes = explode($environment->delimiter, (string) (preg_replace($followMask, '', $message)));
 							return $this->getByNodes($environment, $nodes ? array_merge($followNodes, $nodes) : $followNodes, $parameters, $this->data);
 						}
 
-						return empty($parameters) ? strval($entry[$node]) : strval(call_user_func_array('sprintf', array_merge([$entry[$node]], $parameters)));
+						return empty($parameters)
+							? (string) ($entry[$node])
+							: (string) (call_user_func_array('sprintf', array_merge([$entry[$node]], $parameters))); // @phpstan-ignore-line
 
 					} else {
 						throw new InvalidArgumentException(sprintf('Node value is not supported: %s', var_export($entry[$node], true)));
 					}
 				}
-			} else if(!empty($parameters)) {
+			} elseif (!empty($parameters)) {
 				$node = $parameters[0];
-				if(isset($entry[$node])) {
+				if (isset($entry[$node])) {
 					$parameters[0] = $entry[$node];
-					return strval(call_user_func_array('sprintf', $parameters));
+					return (string) (call_user_func_array('sprintf', $parameters)); // @phpstan-ignore-line
 
-				} else if(isset($entry[$environment->placeholder])) {
-					return strval(call_user_func_array('sprintf', array_merge([$entry[$environment->placeholder]], $parameters)));
+				} elseif (isset($entry[$environment->placeholder])) {
+					return (string) (call_user_func_array('sprintf', array_merge([$entry[$environment->placeholder]], $parameters))); // @phpstan-ignore-line
 				}
 			}
 		} else {

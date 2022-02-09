@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
 
-use Nette\SmartObject;
 
 
 final class TranslatorNamespaceFactory
@@ -17,6 +17,7 @@ final class TranslatorNamespaceFactory
 		$this->translator = $translator;
 		$this->dictionariesRepository = $dictionariesRepository;
 	}
+
 
 	public function getTranslationsDirectoryName(): string
 	{

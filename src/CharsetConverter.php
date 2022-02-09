@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -19,7 +20,7 @@ class CharsetConverter
 		string $charsetTo = 'windows-1250',
 		bool $transliteration = true,
 	): string|array|false {
-		if($transliteration) {
+		if ($transliteration) {
 			$charsetTo = "{$charsetTo}//TRANSLIT";
 		}
 

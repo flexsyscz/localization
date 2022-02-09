@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -32,14 +33,16 @@ trait TranslatedComponent
 	{
 		$ns = null;
 		foreach ($this->reflection->getAttributes() as $attribute) {
-			if($attribute->getName() === NamespaceAttribute::class) {
+			if ($attribute->getName() === NamespaceAttribute::class) {
 				$args = $attribute->getArguments();
 				$ns = $args[0] ?? null;
 			}
 		}
 
-		$ns = $ns ?? $this->reflection->getName();
-		return $name ? sprintf('!%s%s%s', $ns, $this->translatorNamespace->translator->delimiter, $name) : $ns;
+		$ns ??= $this->reflection->getName();
+		return $name
+			? sprintf('!%s%s%s', $ns, $this->translatorNamespace->translator->delimiter, $name)
+			: $ns;
 	}
 
 

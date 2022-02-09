@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -40,13 +41,12 @@ class Translator implements Localization\Translator
 
 	public function setup(string $language, string $fallback = null): void
 	{
-		if(!$this->dictionariesRepository->environment->isSupportedLanguage($language)) {
+		if (!$this->dictionariesRepository->environment->isSupportedLanguage($language)) {
 			throw new InvalidArgumentException(sprintf("Language '%s' is not supported.", $language));
 		}
 
 		$this->language = $language;
 		$this->fallback = $fallback && $this->dictionariesRepository->environment->isSupportedLanguage($fallback) ? $fallback : null;
-
 	}
 
 
@@ -59,11 +59,13 @@ class Translator implements Localization\Translator
 	public function setLanguage(string $language, string $fallback = null): self
 	{
 		$dictionary = $this->dictionariesRepository->getBy($this->namespace, $language);
-		if(!$dictionary) {
+		if (!$dictionary) {
 			throw new InvalidArgumentException(sprintf("Dictionary with language '%s' in namespace '%s' not found.", $language, $this->namespace));
 		}
 
-		$this->fallback = $fallback && $this->dictionariesRepository->environment->isSupportedLanguage($fallback) ? $fallback : $this->language;
+		$this->fallback = $fallback && $this->dictionariesRepository->environment->isSupportedLanguage($fallback)
+			? $fallback
+			: $this->language;
 		$this->setDictionary($dictionary);
 
 		return $this;
@@ -94,21 +96,21 @@ class Translator implements Localization\Translator
 
 	public function translate($message, ...$parameters): string
 	{
-		if(!isset($this->dictionary)) {
+		if (!isset($this->dictionary)) {
 			throw new InvalidStateException('Dictionary is not set.');
 		}
 
 		$translation = null;
-		if(is_string($message)) {
+		if (is_string($message)) {
 			try {
-				if($this->dictionariesRepository->environment->delimiter === '') {
+				if ($this->dictionariesRepository->environment->delimiter === '') {
 					throw new InvalidArgumentException('Delimiter must be non-empty string.');
 				}
 
 				$nodes = explode($this->dictionariesRepository->environment->delimiter, $message);
 				$forcedNsMask = '#^!#';
 				if (preg_match($forcedNsMask, current($nodes))) {
-					$namespace = strval(preg_replace($forcedNsMask, '', array_shift($nodes)));
+					$namespace = (string) (preg_replace($forcedNsMask, '', array_shift($nodes)));
 					$dictionary = $this->dictionariesRepository->getBy($namespace, $this->language);
 					if ($dictionary) {
 						$this->setDictionary($dictionary);
@@ -118,9 +120,9 @@ class Translator implements Localization\Translator
 					}
 				}
 				$translation = $this->dictionary->getByNodes($this->dictionariesRepository->environment, $nodes, $parameters);
-				if(!$translation && $this->fallback) {
+				if (!$translation && $this->fallback) {
 					$dictionary = $this->dictionariesRepository->getBy($this->namespace, $this->fallback);
-					if($dictionary) {
+					if ($dictionary) {
 						$translation = $dictionary->getByNodes($this->dictionariesRepository->environment, $nodes, $parameters);
 						if ($translation) {
 							$this->dictionariesRepository->environment->log(sprintf("Translation '%s' not found in primary dictionary '%s' but found in fallback dictionary '%s'", $message, $this->dictionary->filePath, $dictionary->filePath), ILogger::ERROR);
@@ -128,7 +130,7 @@ class Translator implements Localization\Translator
 					}
 				}
 
-				if(!$translation) {
+				if (!$translation) {
 					$this->dictionariesRepository->environment->log(sprintf("Translation '%s' not found in dictionary '%s'", $message, $this->dictionary->filePath), ILogger::ERROR);
 					$translation = $message;
 				}
@@ -141,7 +143,7 @@ class Translator implements Localization\Translator
 		if ($this->dictionariesRepository->environment->debugMode) {
 			$backtrace = [];
 			foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 5) as $level) {
-				if(isset($level['file'])) {
+				if (isset($level['file'])) {
 					$backtrace[] = $this->dictionariesRepository->environment->normalizePath($level['file']);
 				}
 			}

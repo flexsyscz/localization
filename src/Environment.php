@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -42,15 +43,11 @@ class Environment
 	private bool $debugMode;
 
 
-	/**
-	 * @param EnvironmentProperties $properties
-	 * @param ILogger $logger
-	 */
 	public function __construct(EnvironmentProperties $properties, ILogger $logger)
 	{
 		$this->supportedLanguages = [];
 		foreach ($properties->supportedLanguages as $supportedLanguage) {
-			if(isset($supportedLanguage->name) && isset($supportedLanguage->value)) { // @todo remove condition after enums will be fully supported in PHPStan
+			if (isset($supportedLanguage->name, $supportedLanguage->value)) { // @todo remove condition after enums will be fully supported in PHPStan
 				$this->supportedLanguages[Strings::lower($supportedLanguage->name)] = (string) $supportedLanguage->value;
 			}
 		}
@@ -146,7 +143,7 @@ class Environment
 
 	public function log(string|object $message, string $level = ILogger::INFO): void
 	{
-		if($this->logging) {
+		if ($this->logging) {
 			$this->logger->log($message, $level);
 		}
 	}

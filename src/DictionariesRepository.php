@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -36,11 +37,11 @@ class DictionariesRepository
 
 	public function add(string $path, string $namespace = null): self
 	{
-		if(!$namespace) {
+		if (!$namespace) {
 			$namespace = $this->environment->defaultNamespace;
 		}
 
-		if(isset($this->map[$namespace])) {
+		if (isset($this->map[$namespace])) {
 			throw new InvalidStateException("Namespace '%s' does already exist.");
 		}
 
@@ -74,7 +75,7 @@ class DictionariesRepository
 									if (file_exists($import)) {
 										unset($content[$key]);
 
-										$key = (string)(preg_replace($importMask, '', $key));
+										$key = (string) (preg_replace($importMask, '', $key));
 										$content[$key] = Neon::decode(FileSystem::read($import));
 
 										$this->environment->log(sprintf("Dictionary '%s' with language '%s' imported as key '%s' in namespace '%s'.", $this->environment->normalizePath($filePath), $language, $key, $namespace));

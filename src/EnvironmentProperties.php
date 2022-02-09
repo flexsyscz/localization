@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -23,16 +24,16 @@ class EnvironmentProperties
 	public bool $debugMode = false;
 
 	public string $defaultNamespace = 'default';
+	public int $maxFollowings = 5;
 	private string $delimiter = '.';
 	private string $placeholder = '?';
 	private string $followSymbol = '@';
-	public int $maxFollowings = 5;
 
 
 	public function setDelimiter(string $delimiter): void
 	{
 		$enum = ['.', ':', '_', '->', '/', '-'];
-		if(!in_array($delimiter, $enum, true)) {
+		if (!in_array($delimiter, $enum, true)) {
 			throw new InvalidArgumentException(sprintf("Delimiter '%s' is not allowed in the enumeration ['%s']", $delimiter, implode("', '", $enum)));
 		}
 
@@ -49,7 +50,7 @@ class EnvironmentProperties
 	public function setPlaceholder(string $placeholder): void
 	{
 		$enum = ['?', '*', '%'];
-		if(!in_array($placeholder, $enum, true)) {
+		if (!in_array($placeholder, $enum, true)) {
 			throw new InvalidArgumentException(sprintf("Placeholder '%s' is not allowed in the enumeration ['%s']", $placeholder, implode("', '", $enum)));
 		}
 
@@ -66,7 +67,7 @@ class EnvironmentProperties
 	public function setFollowSymbol(string $followSymbol): void
 	{
 		$enum = ['@', '$', '~'];
-		if(!in_array($followSymbol, $enum, true)) {
+		if (!in_array($followSymbol, $enum, true)) {
 			throw new InvalidArgumentException(sprintf("Follow symbol '%s' is not allowed in the enumeration ['%s']", $followSymbol, implode("', '", $enum)));
 		}
 

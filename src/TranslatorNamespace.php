@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
@@ -21,8 +22,11 @@ final class TranslatorNamespace implements Localization\Translator
 	private DictionariesRepository $dictionariesRepository;
 
 
-	public function __construct(string $namespace, Translator $translator, DictionariesRepository $dictionariesRepository)
-	{
+	public function __construct(
+		string $namespace,
+		Translator $translator,
+		DictionariesRepository $dictionariesRepository,
+	) {
 		$this->namespace = $namespace;
 		$this->translator = $translator;
 		$this->dictionariesRepository = $dictionariesRepository;
@@ -49,9 +53,9 @@ final class TranslatorNamespace implements Localization\Translator
 
 	public function translate($message, ...$parameters): string
 	{
-		if($this->translator->namespace !== $this->namespace) {
+		if ($this->translator->namespace !== $this->namespace) {
 			$dictionary = $this->dictionariesRepository->getBy($this->namespace, $this->translator->language);
-			if(!$dictionary) {
+			if (!$dictionary) {
 				throw new InvalidStateException(sprintf("Dictionary with language '%s' in namespace '%s' not found.", $this->translator->language, $this->namespace));
 			}
 
