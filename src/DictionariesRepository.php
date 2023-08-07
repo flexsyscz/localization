@@ -71,8 +71,15 @@ class DictionariesRepository
 						foreach ($content as $key => $value) {
 							if (preg_match($importMask, $key)) {
 								if (is_string($value)) {
-									$import = dirname($filePath) . DIRECTORY_SEPARATOR . $value;
-									if (file_exists($import)) {
+									$import = str_contains($value, '%appDir%')
+										? str_replace('%appDir%', $this->environment->appDir, $value)
+										: dirname($filePath) . DIRECTORY_SEPARATOR . $value;
+
+									if (str_contains($import, '*')) {
+										$import = str_replace('*', $item, $import);
+									}
+
+									if (is_string($import) && file_exists($import)) {
 										unset($content[$key]);
 
 										$key = (string) (preg_replace($importMask, '', $key));

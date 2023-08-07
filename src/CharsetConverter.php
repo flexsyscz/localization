@@ -12,7 +12,7 @@ class CharsetConverter
 	 * @param string $charsetFrom
 	 * @param string $charsetTo
 	 * @param bool $transliteration
-	 * @return string|array<false|string>
+	 * @return false|string|array<false|string>
 	 */
 	public static function convert(
 		string|array $input,
@@ -26,7 +26,7 @@ class CharsetConverter
 
 		if (is_array($input)) {
 			foreach ($input as $key => $value) {
-				$input[$key] = iconv($charsetFrom, $charsetTo, is_string($value) ? $value : '');
+				$input[$key] = iconv($charsetFrom, $charsetTo, (string) $value);
 			}
 
 			return $input;

@@ -12,6 +12,7 @@ use Tracy\ILogger;
 
 /**
  * @property-read string[]			 	$supportedLanguages
+ * @property-read string				$appDir
  * @property-read string				$translationsDirectoryName
  * @property-read bool					$logging
  * @property-read bool					$debugMode
@@ -20,7 +21,7 @@ use Tracy\ILogger;
  * @property-read string				$delimiter
  * @property-read string				$placeholder
  * @property-read string				$followSymbol
- * @property-read string				$maxFollowings
+ * @property-read int				    $maxFollowings
  */
 class Environment
 {
@@ -47,9 +48,7 @@ class Environment
 	{
 		$this->supportedLanguages = [];
 		foreach ($properties->supportedLanguages as $supportedLanguage) {
-			if (isset($supportedLanguage->name, $supportedLanguage->value)) { // @todo remove condition after enums will be fully supported in PHPStan
-				$this->supportedLanguages[Strings::lower($supportedLanguage->name)] = (string) $supportedLanguage->value;
-			}
+			$this->supportedLanguages[Strings::lower($supportedLanguage->name)] = (string) $supportedLanguage->value;
 		}
 
 		$this->appDir = dirname(FileSystem::normalizePath($properties->appDir));
@@ -79,6 +78,12 @@ class Environment
 	public function getSupportedLanguages(): array
 	{
 		return $this->supportedLanguages;
+	}
+
+
+	public function getAppDir(): string
+	{
+		return $this->appDir;
 	}
 
 

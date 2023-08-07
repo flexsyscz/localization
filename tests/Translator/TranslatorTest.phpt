@@ -116,6 +116,12 @@ class TranslatorTest extends TestCase
 		Assert::equal('Titulek předka', $translator->translate('parent.title'));
 		Assert::equal('Titulek předka', $translator->translate('!default.parent.title'));
 
+		Assert::equal('Nový titulek', $translator->translate('parent2.title'));
+		Assert::equal('Nový titulek', $translator->translate('!default.parent2.title'));
+
+		Assert::equal('Další titulek', $translator->translate('parent3.title'));
+		Assert::equal('Další titulek', $translator->translate('!default.parent3.title'));
+
 		Assert::equal('Dnes je pátek', $translator->translate('content.title', 'pátek'));
 
 		Assert::equal('před chvílí', $translator->translate('time.ago.second', 1));
@@ -132,6 +138,8 @@ class TranslatorTest extends TestCase
 		Assert::equal('et dolores el simet 2', $translator->translate('content.homepage.description.part4.part2'));
 
 		Assert::equal('Parent title', $translator->translate('parent.title'));
+		Assert::equal('New title', $translator->translate('parent2.title'));
+		Assert::equal('Another title', $translator->translate('parent3.title'));
 
 		Assert::equal('Today is friday', $translator->translate('content.title', 'friday'));
 

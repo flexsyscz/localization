@@ -10,10 +10,10 @@ use Tracy\ILogger;
 
 
 /**
- * @property-read string 	$namespace
- * @property-read string 	$language
- * @property-read string	$delimiter
- * @property-read iterable	$debugger
+ * @property-read string 	            $namespace
+ * @property-read string 	            $language
+ * @property-read string	            $delimiter
+ * @property-read array<string|mixed> 	$debugger
  */
 class Translator implements Localization\Translator
 {

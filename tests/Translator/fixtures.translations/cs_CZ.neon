@@ -1,4 +1,6 @@
 +parent: parents/cs_CZ.neon
++parent2: %appDir%/tests/Translator/fixtures.translations/parents2/cs_CZ.neon
++parent3: %appDir%/tests/Translator/fixtures.translations/parents3/*
 
 messages:
 	error:
