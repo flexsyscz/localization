@@ -66,40 +66,40 @@ class DictionariesRepository
 				try {
 					$dictionary = new Dictionary($namespace, $language, $this->environment->normalizePath($filePath));
 					$content = Neon::decode(FileSystem::read($filePath));
-					if (is_array($content)) {
-						$importMask = sprintf('#^\\%s#', Environment::IMPORT_SYMBOL);
-						foreach ($content as $key => $value) {
-							if (preg_match($importMask, $key)) {
-								if (is_string($value)) {
-									$import = str_contains($value, '%appDir%')
-										? str_replace('%appDir%', $this->environment->appDir, $value)
-										: dirname($filePath) . DIRECTORY_SEPARATOR . $value;
+					if (!is_array($content)) {
+						$content = [];
+					}
 
-									if (str_contains($import, '*')) {
-										$import = str_replace('*', $item, $import);
-									}
+					$importMask = sprintf('#^\\%s#', Environment::IMPORT_SYMBOL);
+					foreach ($content as $key => $value) {
+						if (preg_match($importMask, $key)) {
+							if (is_string($value)) {
+								$import = str_contains($value, '%appDir%')
+									? str_replace('%appDir%', $this->environment->appDir, $value)
+									: dirname($filePath) . DIRECTORY_SEPARATOR . $value;
 
-									if (is_string($import) && file_exists($import)) {
-										unset($content[$key]);
-
-										$key = (string) (preg_replace($importMask, '', $key));
-										$content[$key] = Neon::decode(FileSystem::read($import));
-
-										$this->environment->log(sprintf("Dictionary '%s' with language '%s' imported as key '%s' in namespace '%s'.", $this->environment->normalizePath($filePath), $language, $key, $namespace));
-									} else {
-										throw new InvalidArgumentException(sprintf('The file to import not found: %s.', $import));
-									}
-								} else {
-									throw new InvalidArgumentException(sprintf('Invalid path to import under key: %s.', $key));
+								if (str_contains($import, '*')) {
+									$import = str_replace('*', $item, $import);
 								}
+
+								if (is_string($import) && file_exists($import)) {
+									unset($content[$key]);
+
+									$key = (string) (preg_replace($importMask, '', $key));
+									$content[$key] = Neon::decode(FileSystem::read($import));
+
+									$this->environment->log(sprintf("Dictionary '%s' with language '%s' imported as key '%s' in namespace '%s'.", $this->environment->normalizePath($filePath), $language, $key, $namespace));
+								} else {
+									throw new InvalidArgumentException(sprintf('The file to import not found: %s.', $import));
+								}
+							} else {
+								throw new InvalidArgumentException(sprintf('Invalid path to import under key: %s.', $key));
 							}
 						}
-
-						$this->map[$namespace][$language] = $dictionary->setData($content);
-						$this->environment->log(sprintf("Dictionary '%s' with language '%s' in namespace '%s' has been added.", $this->environment->normalizePath($filePath), $language, $namespace));
-					} else {
-						$this->environment->log(sprintf("Dictionary '%s' doesn't contain any iterable data.", $this->environment->normalizePath($filePath)), ILogger::ERROR);
 					}
+
+					$this->map[$namespace][$language] = $dictionary->setData($content);
+					$this->environment->log(sprintf("Dictionary '%s' with language '%s' in namespace '%s' has been added.", $this->environment->normalizePath($filePath), $language, $namespace));
 
 				} catch (InvalidStateException $e) {
 					$this->environment->log($e);
