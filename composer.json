@@ -15,7 +15,7 @@
 		"tracy/tracy": "^2.10",
 		"nette/utils": "^4.0",
 		"nette/neon": "^3.4",
-		"latte/latte": "^2.11",
+		"latte/latte": "^3.0",
 		"ext-iconv": "*"
 	},
 	"require-dev": {
