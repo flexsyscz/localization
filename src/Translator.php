@@ -94,6 +94,11 @@ class Translator implements Localization\Translator
 	}
 
 
+	/**
+	 * @param string|\Stringable $message
+	 * @param mixed ...$parameters
+	 * @return string
+	 */
 	public function translate($message, ...$parameters): string
 	{
 		if (!isset($this->dictionary)) {

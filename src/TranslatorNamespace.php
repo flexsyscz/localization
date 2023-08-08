@@ -51,6 +51,11 @@ final class TranslatorNamespace implements Localization\Translator
 	}
 
 
+	/**
+	 * @param string|\Stringable $message
+	 * @param mixed ...$parameters
+	 * @return string
+	 */
 	public function translate($message, ...$parameters): string
 	{
 		if ($this->translator->namespace !== $this->namespace) {
