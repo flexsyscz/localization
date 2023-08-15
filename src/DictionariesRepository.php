@@ -70,7 +70,7 @@ class DictionariesRepository
 						$content = [];
 					}
 
-					$importMask = sprintf('#^\\%s#', Environment::IMPORT_SYMBOL);
+					$importMask = sprintf('#^\\%s#', Environment::ImportSymbol);
 					foreach ($content as $key => $value) {
 						if (preg_match($importMask, $key)) {
 							if (is_string($value)) {

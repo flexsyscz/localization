@@ -27,7 +27,7 @@ class Environment
 {
 	use SmartObject;
 
-	public const IMPORT_SYMBOL = '+';
+	public const ImportSymbol = '+';
 
 	private string $defaultNamespace;
 	private string $delimiter;
