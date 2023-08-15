@@ -9,7 +9,7 @@ use ReflectionClass;
 
 trait TranslatedComponent
 {
-	private TranslatorNamespace $translatorNamespace;
+	protected TranslatorNamespace $translatorNamespace;
 	private ReflectionClass $reflection;
 
 
