@@ -19,7 +19,7 @@ class Translator implements Localization\Translator
 {
 	use SmartObject;
 
-	private const TRANSLATION_NOT_SUPPORTED_ERROR = '[!] TRANSLATION_NOT_SUPPORTED_ERROR';
+	private const TranslationNotSupportedError = '[!] ERROR: Translation not supported';
 
 	private DictionariesRepository $dictionariesRepository;
 	private Dictionary $dictionary;
@@ -165,7 +165,7 @@ class Translator implements Localization\Translator
 			];
 		}
 
-		return $translation ?? self::TRANSLATION_NOT_SUPPORTED_ERROR;
+		return $translation ?? self::TranslationNotSupportedError;
 	}
 
 
