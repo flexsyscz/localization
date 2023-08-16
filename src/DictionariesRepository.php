@@ -42,7 +42,7 @@ class DictionariesRepository
 		}
 
 		if (isset($this->map[$namespace])) {
-			throw new InvalidStateException("Namespace '%s' does already exist.");
+			throw new InvalidStateException(sprintf("Namespace '%s' does already exist.", $namespace));
 		}
 
 		if (!is_dir($path)) {
