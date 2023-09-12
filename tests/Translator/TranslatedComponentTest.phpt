@@ -35,7 +35,7 @@ class TranslatedComponentTest extends TestCase
 
 		$properties = new Localization\EnvironmentProperties();
 		$properties->supportedLanguages = SupportedLanguages::cases();
-		$properties->appDir = __DIR__ . '/../';
+		$properties->appDir = __DIR__ . '/../../';
 		$properties->translationsDirectoryName = 'fixtures.translations/injectedTestComponent';
 		$properties->logging = true;
 		$properties->debugMode = true;

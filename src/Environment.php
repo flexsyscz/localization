@@ -51,7 +51,8 @@ class Environment
 			$this->supportedLanguages[Strings::lower($supportedLanguage->name)] = (string) $supportedLanguage->value;
 		}
 
-		$this->appDir = dirname(FileSystem::normalizePath($properties->appDir));
+		$appDir = FileSystem::normalizePath($properties->appDir);
+		$this->appDir = is_dir($appDir) ? $appDir : dirname($appDir);
 		$this->translationsDirectoryName = $properties->translationsDirectoryName;
 		$this->logging = $properties->logging;
 		$this->debugMode = $properties->debugMode;
