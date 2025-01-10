@@ -20,7 +20,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "^2.5",
-		"phpstan/phpstan-nette": "^1.2",
+		"phpstan/phpstan-nette": "^2.0",
 		"nette/coding-standard": "^3.3"
 	},
 	"autoload": {
@@ -33,7 +33,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "1.0-dev"
+			"dev-master": "2.0-dev"
 		}
 	},
 	"config": {
