@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Translator;
 
+use Flexsyscz\FileSystem\Directories\AppDirectory;
+use Flexsyscz\FileSystem\Directories\DocumentRoot;
 use Flexsyscz\Localization;
+use Flexsyscz\Localization\Translations\Configurator;
 use Tester\Assert;
 use Tester\TestCase;
 use Tests\Resources\SupportedLanguages;
@@ -20,7 +23,9 @@ class TranslatorTest extends TestCase
 {
 	private string $logDir;
 
-	private Localization\DictionariesRepository $dictionariesRepository;
+	private Localization\Translations\Configurator $configurator;
+	private Localization\Translations\Logger $logger;
+	private Localization\Translations\Repository $repository;
 
 
 	public function setUp(): void
@@ -30,16 +35,12 @@ class TranslatorTest extends TestCase
 			@mkdir($this->logDir);
 		}
 
-		$properties = new Localization\EnvironmentProperties();
-		$properties->supportedLanguages = SupportedLanguages::cases();
-		$properties->appDir = __DIR__ . '/../../';
-		$properties->translationsDirectoryName = 'fixtures.translations';
-		$properties->logging = true;
-		$properties->debugMode = true;
-
-		$logger = new Logger($this->logDir);
-		$environment = new Localization\Environment($properties, $logger);
-		$this->dictionariesRepository = new Localization\DictionariesRepository($environment);
+		$documentRoot = new DocumentRoot(__DIR__ . '/../../');
+		$appDir = new AppDirectory( __DIR__ . '/../../', $documentRoot);
+		$tracyLogger = new Logger($this->logDir);
+		$this->configurator = new Configurator($appDir, SupportedLanguages::Czech, debugMode: true, logging: true, translationsDirName: 'fixtures.translations');
+		$this->logger = new Localization\Translations\Logger($this->configurator, $tracyLogger);
+		$this->repository = new Localization\Translations\Repository($this->configurator, $this->logger);
 	}
 
 
@@ -56,57 +57,63 @@ class TranslatorTest extends TestCase
 	{
 		Assert::exception(function () {
 			$namespace = 'default';
-			$this->dictionariesRepository->add(__DIR__ . '/fixtures.translations_wrong_path/', $namespace);
-			$this->dictionariesRepository->getBy($namespace, SupportedLanguages::CZECH->value);
-		}, Localization\InvalidArgumentException::class);
+			$this->repository->add(__DIR__ . '/fixtures.translations_wrong_path/', $namespace);
+			$this->repository->getBy($namespace, SupportedLanguages::Czech);
+		}, Localization\Exceptions\InvalidDictionaryException::class);
 	}
 
 
 	public function testLoggingTranslation(): void
 	{
-		$translator = new Localization\Translator($this->dictionariesRepository);
-		$translator->setup(SupportedLanguages::CZECH->value, SupportedLanguages::ENGLISH->value);
+		$translator = new Localization\Translations\Translator($this->configurator, $this->repository, $this->logger);
 
 		$namespace = 'default';
-		$this->dictionariesRepository->add(__DIR__ . '/fixtures.translations/', $namespace);
-		$dictionary = $this->dictionariesRepository->getBy($namespace, SupportedLanguages::CZECH->value);
+		$this->repository->add(__DIR__ . '/fixtures.translations/', $namespace);
+		$dictionary = $this->repository->getBy($namespace, SupportedLanguages::Czech);
 
-		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Dictionary::class));
-		$translator->setDictionary($dictionary);
+		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Translations\Dictionary::class));
+		if (isset($dictionary)) {
+			$translator->setDictionary($dictionary);
+		}
 
 		$translator->translate('messages.error.accessDenied_');
-		Assert::true(file_exists($this->logDir . '/error.log'));
+		Assert::true(file_exists($this->logDir . '/translations.log'));
 	}
 
 
 	public function testLoggingMaxFollowingsExceeded(): void
 	{
-		$translator = new Localization\Translator($this->dictionariesRepository);
-		$translator->setup(SupportedLanguages::CZECH->value, SupportedLanguages::ENGLISH->value);
+		$translator = new Localization\Translations\Translator($this->configurator, $this->repository, $this->logger);
 
 		$namespace = 'default';
-		$this->dictionariesRepository->add(__DIR__ . '/fixtures.translations/', $namespace);
-		$dictionary = $this->dictionariesRepository->getBy($namespace, SupportedLanguages::CZECH->value);
+		$this->repository->add(__DIR__ . '/fixtures.translations/', $namespace);
+		$dictionary = $this->repository->getBy($namespace, SupportedLanguages::Czech);
 
-		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Dictionary::class));
-		$translator->setDictionary($dictionary);
+		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Translations\Dictionary::class));
+		if (isset($dictionary)) {
+			$translator->setDictionary($dictionary);
+		}
 
-		$translator->translate('content.homepage.description.part5');
-		Assert::true(file_exists($this->logDir . '/error.log'));
+		Assert::exception(function () use ($translator) {
+			$translator->translate('content.homepage.description.part5');
+		}, Localization\Exceptions\InvalidStateException::class);
+
+		Assert::true(file_exists($this->logDir . '/translations.log'));
 	}
 
 
 	public function testTranslate(): void
 	{
-		$translator = new Localization\Translator($this->dictionariesRepository);
-		$translator->setup(SupportedLanguages::CZECH->value, SupportedLanguages::ENGLISH->value);
+		$translator = new Localization\Translations\Translator($this->configurator, $this->repository, $this->logger);
 
 		$namespace = 'default';
-		$this->dictionariesRepository->add(__DIR__ . '/fixtures.translations/', $namespace);
-		$dictionary = $this->dictionariesRepository->getBy($namespace, SupportedLanguages::CZECH->value);
+		$this->repository->add(__DIR__ . '/fixtures.translations/', $namespace);
+		$dictionary = $this->repository->getBy($namespace, SupportedLanguages::Czech);
 
-		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Dictionary::class));
-		$translator->setDictionary($dictionary);
+		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Translations\Dictionary::class));
+		if (isset($dictionary)) {
+			$translator->setDictionary($dictionary);
+		}
 
 		Assert::equal('Uživatel nenalezen.', $translator->translate('messages.error.userNotFound'));
 		Assert::equal('Dobrý den!', $translator->translate('content.homepage.header'));
@@ -131,7 +138,7 @@ class TranslatorTest extends TestCase
 		Assert::equal('Uživatel John Doe [ID: 12345] se přihlásil v 08:12.', $translator->translate('placeholder.userLogged', 'John Doe', 12345, '08:12'));
 
 
-		Assert::equal('Hello world!', $translator->setLanguage(SupportedLanguages::ENGLISH->value, SupportedLanguages::CZECH->value)
+		Assert::equal('Hello world!', $translator->setLanguage(SupportedLanguages::English, SupportedLanguages::Czech)
 			->translate('content.homepage.header'));
 
 		Assert::equal('Hello world!', $translator->translate('content.homepage.description.part3'));
@@ -149,16 +156,14 @@ class TranslatorTest extends TestCase
 
 		Assert::equal('User John Doe [ID: 12345] has been logged in at 08:12.', $translator->translate('placeholder.userLogged', 'John Doe', 12345, '08:12'));
 
-		Assert::true(file_exists($this->logDir . '/info.log'));
-		Assert::false(file_exists($this->logDir . '/error.log'));
-
+		Assert::true(file_exists($this->logDir . '/translations.log'));
 
 		Assert::equal('Tento překlad v EN chybí', $translator->translate('fallback.a'));
 
-		Assert::equal('This translation is missing in CZ', $translator->setLanguage(SupportedLanguages::CZECH->value)
+		Assert::equal('This translation is missing in CZ', $translator->setLanguage(SupportedLanguages::Czech, SupportedLanguages::English)
 			->translate('fallback.b'));
 
-		Assert::true(file_exists($this->logDir . '/error.log'));
+		Assert::true(file_exists($this->logDir . '/translations.log'));
 	}
 }
 

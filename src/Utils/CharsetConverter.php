@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Flexsyscz\Localization;
 
+use Flexsyscz\Localization\Exceptions\InvalidCharsetException;
+
 
 class CharsetConverter
 {
@@ -20,18 +22,27 @@ class CharsetConverter
 		string $charsetTo = 'windows-1250',
 		bool $transliteration = true,
 	): string|array|false {
+		if (!in_array($charsetFrom, mb_list_encodings(), true)) {
+			throw new InvalidCharsetException("Invalid charset: $charsetFrom");
+		}
+
+		if (!in_array($charsetTo, mb_list_encodings(), true)) {
+			throw new InvalidCharsetException("Invalid charset: $charsetTo");
+		}
+
 		if ($transliteration) {
 			$charsetTo = "{$charsetTo}//TRANSLIT";
 		}
 
 		if (is_array($input)) {
-			foreach ($input as $key => $value) {
-				$input[$key] = iconv($charsetFrom, $charsetTo, (string) $value);
-			}
-
-			return $input;
+			return array_map(fn($value) => iconv($charsetFrom, $charsetTo, (string) $value) ?: $value, $input);
 		}
 
-		return iconv($charsetFrom, $charsetTo, $input);
+		$converted = iconv($charsetFrom, $charsetTo, $input);
+		if ($converted === false) {
+			return false;
+		}
+
+		return $converted;
 	}
 }

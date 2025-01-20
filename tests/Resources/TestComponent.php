@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Resources;
 
-use Flexsyscz\Localization\NamespaceAttribute;
-use Flexsyscz\Localization\TranslatedComponent;
+use Flexsyscz\Localization\Translations\NamespaceAttribute;
+use Flexsyscz\Localization\Translations\TranslatedComponent;
 
 
 #[NamespaceAttribute('customNS')]

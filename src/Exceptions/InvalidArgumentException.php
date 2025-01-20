@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Flexsyscz\Localization;
+namespace Flexsyscz\Localization\Exceptions;
 
 
 class InvalidArgumentException extends \InvalidArgumentException

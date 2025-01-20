@@ -1,5 +1,5 @@
-{varType Flexsyscz\Localization\Translator $translator}
-{varType Flexsyscz\Localization\DictionariesRepository $dictionariesRepository}
+{varType Flexsyscz\Localization\Translations\Translator $translator}
+{varType Flexsyscz\Localization\Translations\Repository $repository}
 
 <h1>Translations</h1>
 <div class="tracy-inner">
@@ -13,7 +13,7 @@
                 <th>File</th>
             </tr>
             </thead>
-            {foreach $dictionariesRepository->findAll() as $namespace => $languages}
+            {foreach $repository->findAll() as $languages}
                 <tr n:foreach="$languages as $dictionary">
                     <td>{$dictionary->namespace}</td>
                     <td>{$dictionary->language}</td>

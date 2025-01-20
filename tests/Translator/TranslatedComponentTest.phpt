@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Translator;
 
+use Flexsyscz\FileSystem\Directories\AppDirectory;
+use Flexsyscz\FileSystem\Directories\DocumentRoot;
 use Flexsyscz\Localization;
+use Flexsyscz\Localization\Translations\Configurator;
 use Tester\Assert;
 use Tester\TestCase;
 use Tests\Resources\SupportedLanguages;
@@ -21,9 +24,10 @@ class TranslatedComponentTest extends TestCase
 {
 	private string $logDir;
 
-	private Localization\DictionariesRepository $dictionariesRepository;
-	private Localization\Translator $translator;
-	private ?Localization\Dictionary $dictionary;
+	private Localization\Translations\Configurator $configurator;
+	private Localization\Translations\Repository $repository;
+	private Localization\Translations\Translator $translator;
+	private ?Localization\Translations\Dictionary $dictionary;
 
 
 	public function setUp(): void
@@ -33,21 +37,16 @@ class TranslatedComponentTest extends TestCase
 			@mkdir($this->logDir);
 		}
 
-		$properties = new Localization\EnvironmentProperties();
-		$properties->supportedLanguages = SupportedLanguages::cases();
-		$properties->appDir = __DIR__ . '/../../';
-		$properties->translationsDirectoryName = 'fixtures.translations/injectedTestComponent';
-		$properties->logging = true;
-		$properties->debugMode = true;
+		$documentRoot = new DocumentRoot(__DIR__ . '/../../');
+		$appDir = new AppDirectory( __DIR__ . '/../../', $documentRoot);
+		$tracyLogger = new Logger($this->logDir);
+		$this->configurator = new Configurator($appDir, SupportedLanguages::Czech, debugMode: true, logging: true, translationsDirName: 'fixtures.translations/injectedTestComponent');
+		$logger = new Localization\Translations\Logger($this->configurator, $tracyLogger);
+		$this->repository = new Localization\Translations\Repository($this->configurator, $logger);
+		$this->translator = new Localization\Translations\Translator($this->configurator, $this->repository, $logger);
 
-		$logger = new Logger($this->logDir);
-		$environment = new Localization\Environment($properties, $logger);
-		$this->dictionariesRepository = new Localization\DictionariesRepository($environment);
-		$this->translator = new Localization\Translator($this->dictionariesRepository);
-		$this->translator->setup(SupportedLanguages::CZECH->value, SupportedLanguages::ENGLISH->value);
-
-		$this->dictionariesRepository->add(__DIR__ . '/fixtures.translations/', 'default');
-		$this->dictionary = $this->dictionariesRepository->getBy('default', SupportedLanguages::CZECH->value);
+		$this->repository->add(__DIR__ . '/fixtures.translations/', 'default');
+		$this->dictionary = $this->repository->getBy('default', SupportedLanguages::Czech);
 	}
 
 
@@ -62,32 +61,34 @@ class TranslatedComponentTest extends TestCase
 
 	public function testDefault(): void
 	{
-		Assert::notNull($this->dictionary, sprintf('Expected %s', Localization\Dictionary::class));
-		$this->translator->setDictionary($this->dictionary);
+		Assert::notNull($this->dictionary, sprintf('Expected %s', Localization\Translations\Dictionary::class));
+		if (isset($this->dictionary)) {
+			$this->translator->setDictionary($this->dictionary);
+		}
 	}
 
 
 	public function testComponent(): void
 	{
-		$this->dictionariesRepository->add(__DIR__ . '/fixtures.translations/someComponentTranslations', 'myComponent');
-		$dictionary = $this->dictionariesRepository->getBy('myComponent', SupportedLanguages::CZECH->value);
-		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Dictionary::class));
+		$this->repository->add(__DIR__ . '/fixtures.translations/someComponentTranslations', 'myComponent');
+		$dictionary = $this->repository->getBy('myComponent', SupportedLanguages::Czech);
+		Assert::notNull($dictionary, sprintf('Expected %s', Localization\Translations\Dictionary::class));
 		if($dictionary) {
 			$this->translator->setDictionary($dictionary);
 
 			Assert::equal('ahoj', $this->translator->translate('hello'));
 			Assert::equal('toto je název komponenty!', $this->translator->translate('componentName'));
 
-			$this->translator->setLanguage(SupportedLanguages::ENGLISH->value);
+			$this->translator->setLanguage(SupportedLanguages::English);
 			Assert::equal('hello world!', $this->translator->translate('hello'));
 			Assert::equal('my component name!', $this->translator->translate('componentName'));
 
 			$test = new TestComponent();
-			$test->injectTranslator(new Localization\TranslatorNamespaceFactory($this->translator, $this->dictionariesRepository));
+			$test->injectTranslator(new Localization\Translations\TranslatorNamespaceFactory($this->configurator, $this->translator, $this->repository));
 
 			Assert::equal('Test message from injected component.', $test->print());
 
-			$this->translator->setLanguage(SupportedLanguages::CZECH->value);
+			$this->translator->setLanguage(SupportedLanguages::Czech);
 			Assert::equal('Testovací zpráva z injektované komponenty.', $test->print());
 		}
 	}
