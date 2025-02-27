@@ -40,6 +40,12 @@ class Repository
 	}
 
 
+	public function has(string $namespace): bool
+	{
+		return isset($this->map[$namespace]);
+	}
+
+
 	public function add(string $path, string $namespace = null): self
 	{
 		if (!$namespace) {
