@@ -43,7 +43,7 @@ class Translator implements Localization\Translator
 	}
 
 
-	public function setLanguage(SupportedLanguages $language, SupportedLanguages $fallback = null): self
+	public function setLanguage(SupportedLanguages $language, ?SupportedLanguages $fallback = null): self
 	{
 		$this->language = (string) $language->value;
 		$dictionary = $this->repository->getBy($this->namespace, $language);

@@ -46,7 +46,7 @@ class Repository
 	}
 
 
-	public function add(string $path, string $namespace = null): self
+	public function add(string $path, ?string $namespace = null): self
 	{
 		if (!$namespace) {
 			$namespace = $this->configurator->defaultNamespace;

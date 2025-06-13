@@ -45,7 +45,7 @@ class Dictionary
 	 * @param array<array<string|int|float>|string|int|float>|null $entryPoint
 	 * @return string|null
 	 */
-	public function getByNodes(array $nodes, array $parameters, array $entryPoint = null): ?string
+	public function getByNodes(array $nodes, array $parameters, ?array $entryPoint = null): ?string
 	{
 		if ($this->followings <= $this->configurator->maxFollowings) {
 			if (!$entryPoint) {
