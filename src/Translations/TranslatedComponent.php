@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Flexsyscz\Localization\Translations;
 
+use Flexsyscz\Localization\Exceptions\InvalidNamespaceException;
 use Flexsyscz\Localization\Exceptions\InvalidStateException;
 use ReflectionClass;
 
@@ -24,7 +25,21 @@ trait TranslatedComponent
 
 		$namespace = self::ns();
 		$translatorNamespace = $factory->create($namespace);
-		$translatorNamespace->repository->add($dir, $namespace);
+
+		try {
+			$translatorNamespace->repository->add($dir, $namespace);
+		} catch (InvalidNamespaceException $e) {
+			$throw = true;
+			foreach ($this->reflection->getAttributes() as $attribute) {
+				if ($attribute->getName() === SkipInvalidNamespaceAttribute::class) {
+					$throw = false;
+				}
+			}
+
+			if ($throw) {
+				throw $e;
+			}
+		}
 
 		$this->translatorNamespace = $translatorNamespace;
 	}
