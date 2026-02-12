@@ -81,7 +81,7 @@ class Repository
 
 					$importMask = sprintf('#^\\%s#', Configurator::ImportSymbol);
 					foreach ($content as $key => $value) {
-						if (preg_match($importMask, $key)) {
+						if (preg_match($importMask, (string) $key)) {
 							if (is_string($value)) {
 								$import = str_contains($value, self::AppDirFlag)
 									? str_replace(self::AppDirFlag, $this->configurator->appDirectory->getAbsolutePath(), $value)
