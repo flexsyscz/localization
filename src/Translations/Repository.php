@@ -125,4 +125,10 @@ class Repository
 		$path = FileSystem::normalizePath($path);
 		return (string) (preg_replace("#^{$this->configurator->appDirectory->getAbsolutePath()}#", '', $path));
 	}
+
+
+	public function getConfigurator(): Configurator
+	{
+		return $this->configurator;
+	}
 }
