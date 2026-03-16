@@ -123,7 +123,13 @@ class Repository
 	public function normalizePath(string $path): string
 	{
 		$path = FileSystem::normalizePath($path);
-		return (string) (preg_replace("#^{$this->configurator->appDirectory->getAbsolutePath()}#", '', $path));
+		$basePath = $this->configurator->appDirectory->getAbsolutePath();
+
+		if (str_starts_with($path, $basePath)) {
+			return substr($path, strlen($basePath));
+		}
+
+		return $path;
 	}
 
 
