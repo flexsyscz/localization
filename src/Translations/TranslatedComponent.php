@@ -62,12 +62,12 @@ trait TranslatedComponent
 	}
 
 
-	public function translate(string $message, bool $fullyQualifiedNamespace = false): string
+	public function translate(string $message, bool $fullyQualifiedNamespace = false, ...$parameters): string
 	{
 		if ($fullyQualifiedNamespace) {
 			$message = $this->ns($message);
 		}
 
-		return $this->translatorNamespace->translate($message);
+		return $this->translatorNamespace->translate($message, ...$parameters);
 	}
 }
